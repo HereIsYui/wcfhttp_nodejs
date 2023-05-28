@@ -1,6 +1,10 @@
 # wcfhttp_nodejs
+
 一个偷懒玩微信的工具，通过[WeChatFerry](https://github.com/lich0821/WeChatFerry)的http转发实现。
 
+# tips
+
+`开发时请自行复制config.json并改名为config_dev.json`
 
 # 常见问题
 

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from './app.service';
-import { cbData } from 'types/msg';
+import { cbData, msgData } from 'types/msg';
 
 @Controller()
 export class AppController {
@@ -12,7 +12,7 @@ export class AppController {
   }
 
   @Post('/msg_cb')
-  msgCallback(@Body() body): cbData {
+  msgCallback(@Body() body: msgData): Promise<cbData> {
     return this.appService.msgCallback(body);
   }
 }
