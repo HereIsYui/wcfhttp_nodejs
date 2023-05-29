@@ -1,4 +1,12 @@
 {
   "wcfhttp": "你的wcfhttp地址",
-  "listenlist": "监听的群id"
+  "port": 3000,
+  "listenlist": "监听的群id",
+  "database": {
+    "host": "",
+    "port": 3306,
+    "user": "",
+    "password": "",
+    "database": ""
+  }
 }

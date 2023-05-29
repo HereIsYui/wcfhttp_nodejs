@@ -2,11 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { cbData, msgData, contactsData, sendMsgData } from 'types/msg';
 import axios from 'axios';
 import { configInfo as conf } from 'config/conf';
+import { LOGGER } from 'utils/logger';
+import { MoreThan, Repository } from 'typeorm'
+import { InjectRepository } from '@nestjs/typeorm'
+import { User } from './entities/user.entity';
+import { GlobalRulesList } from 'utils/rules';
 
 @Injectable()
 export class AppService {
   contacts: contactsData[];
-  constructor() {
+  constructor(@InjectRepository(User) private readonly user: Repository<User>) {
     this.contacts = [];
   }
   getHello(): string {
@@ -14,14 +19,20 @@ export class AppService {
   }
   async msgCallback(data: msgData): Promise<cbData> {
     if (data.is_group && conf.listenlist.includes(data.roomid)) {
-      if (data.content === 'wxid') {
-        let wxid = await this.getContact(data.sender);
-        console.log(wxid);
-        this.sendMessage({
-          msg: '@' + wxid + ' 的wxid是: ' + data.sender,
-          receiver: data.roomid,
-          aters: data.sender,
-        });
+      LOGGER.Log(`收到来自${data.sender}的消息:${data.content}`)
+      let IceNet = this;
+      for (let r of GlobalRulesList) {
+        if (r.rule.test(data.content)) {
+          let callback = await r.func(data, IceNet);
+          if (callback) {
+            IceNet.sendMessage({
+              msg: callback.msg,
+              receiver: callback.receiver,
+              aters: callback.aters
+            })
+          }
+          break;
+        }
       }
     }
     return {
@@ -48,8 +59,8 @@ export class AppService {
     }
     return this.contacts.find((user) => user.wxid === wxid).NickName;
   }
-  async sendMessage(data: sendMsgData) {
-    let res = await axios({
+  sendMessage(data: sendMsgData) {
+    axios({
       url: conf.wcfhttp + '/text',
       method: 'post',
       data: {
@@ -58,6 +69,5 @@ export class AppService {
         aters: data.aters,
       },
     });
-    console.log(res.data);
   }
 }
