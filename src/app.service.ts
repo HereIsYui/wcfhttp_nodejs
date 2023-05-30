@@ -7,6 +7,7 @@ import { MoreThan, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from './entities/user.entity';
 import { GlobalRulesList } from 'utils/rules';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class AppService {
@@ -69,5 +70,9 @@ export class AppService {
         aters: data.aters,
       },
     });
+  }
+  @Cron('0 0 0 * * *')
+  resetSignin() {
+    this.user.update({ is_signin: 1 }, { is_signin: 0 })
   }
 }

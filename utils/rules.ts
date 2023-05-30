@@ -55,7 +55,7 @@ export const GlobalRulesList = [
       return cb;
     }
   }, {
-    rule: /^查询群排名$/,
+    rule: /^群排名$/,
     func: async (data: msgData, IceNet: any) => {
       let nick_name = await IceNet.getContact(data.sender)
       let rank = await IceNet.user.find({
@@ -79,7 +79,18 @@ export const GlobalRulesList = [
       }
       return cb;
     }
-  },
+  }, {
+    rule: /^领取宠物$/,
+    func: async (data: msgData, IceNet: any) => {
+      let nick_name = await IceNet.getContact(data.sender)
+      let cb = {
+        msg: `@${nick_name} 在写了在写了`,
+        receiver: data.roomid ? data.roomid : data.sender,
+        aters: data.sender
+      }
+      return cb;
+    }
+  }
 ]
 
 function rand(m: number, n: number) {
