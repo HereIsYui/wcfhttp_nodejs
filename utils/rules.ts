@@ -27,9 +27,13 @@ export const GlobalRulesList = [
         aters: data.sender
       }
       if (user.is_signin == 1) {
-        let point = rand(0, 10);
-        user.point = (user.point || 0) - point;
-        cb.msg = `@${nick_name} 已经签到过啦!\n扣你${point}鱼皮, 剩余${user.point}鱼皮`
+        if (user.point < 0) {
+          cb.msg = `@${nick_name} tui~ 鱼皮都没有 还来签到?`
+        } else {
+          let point = rand(0, 10);
+          user.point = (user.point || 0) - point;
+          cb.msg = `@${nick_name} 已经签到过啦!\n扣你${point}鱼皮, 剩余${user.point}鱼皮`
+        }
       } else {
         let point = rand(5, 20);
         user.point = (user.point || 0) + point;
@@ -97,7 +101,7 @@ function rand(m: number, n: number) {
   return Math.ceil(Math.random() * (n - m + 1) + m - 1)
 }
 
-async function getUserInfo(data: msgData, IceNet: any) {
+async function getUserInfo(data: msgData, IceNet: any): Promise<User> {
   let user: User = await IceNet.user.findOne({ where: { wxid: data.sender } })
   if (!(user && user.id)) {
     user = new User();

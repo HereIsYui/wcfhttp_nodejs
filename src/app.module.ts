@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { configInfo as conf } from 'config/conf';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -13,12 +14,11 @@ import { User } from './entities/user.entity';
     username: conf.database.user,        // 连接账号
     password: conf.database.password,     // 连接密码
     database: conf.database.database,     // 连接的表名
-    
     retryDelay: 500,         // 重试连接数据库间隔
     retryAttempts: 10,       // 允许重连次数
     synchronize: true,       // 是否将实体同步到数据库
     autoLoadEntities: true,  // 自动加载实体配置，forFeature()注册的每个实体都自己动加载
-  }), TypeOrmModule.forFeature([User])],
+  }), TypeOrmModule.forFeature([User]),ScheduleModule.forRoot()],
   controllers: [AppController],
   providers: [AppService],
 })
