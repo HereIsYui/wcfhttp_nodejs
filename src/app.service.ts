@@ -55,10 +55,12 @@ export class AppService {
     }
   }
   async getContact(wxid: string) {
-    if (this.contacts.length == 0) {
+    let user = this.contacts.find((user) => user.wxid === wxid);
+    if (this.contacts.length == 0 || !user) {
       await this.getAllContacts();
+      user = this.contacts.find((user) => user.wxid === wxid);
     }
-    return this.contacts.find((user) => user.wxid === wxid).NickName;
+    return user.NickName;
   }
   sendMessage(data: sendMsgData) {
     axios({
